@@ -1,0 +1,17 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/home/vlado/ndnSIM2.1/ns-3/build",
+                "/home/vlado/ndnSIM2.1/ns-3/build/ns3/ndnSIM",
+                "/home/vlado/ndnSIM2.1/ns-3/build/ns3/ndnSIM/NFD"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/clang",
+            "intelliSenseMode": "linux-clang-x64"
+        }
+    ],
+    "version": 4
+}
