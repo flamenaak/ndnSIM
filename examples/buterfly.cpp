@@ -28,8 +28,8 @@ namespace ns3
     ndn::StrategyChoiceHelper::InstallAll("/", "/localhost/nfd/strategy/multicast");
 
     // Installing global routing interface on all nodes
-    ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
-    ndnGlobalRoutingHelper.InstallAll();
+    // ndn::GlobalRoutingHelper ndnGlobalRoutingHelper;
+    // ndnGlobalRoutingHelper.InstallAll();
 
     // Getting containers for the consumer/producer
     Ptr<Node> consumer1 = Names::Find<Node>("Src1");
@@ -47,14 +47,14 @@ namespace ns3
 
     // on the first consumer node install a Consumer application
     // that will express interests in /dst1 namespace
-    consumerHelper.SetPrefix("/CAR");
+    consumerHelper.SetPrefix("/content");
     consumerHelper.Install(consumer1);
     Ptr<BlsApp> appPtr1 = CreateObject<BlsApp>(BlsNodeType::CLIENT);
     uint32_t num = consumer1->AddApplication(appPtr1);
     cout << "index of BlsApp: " << num;
     // on the second consumer node install a Consumer application
     // that will express interests in /dst2 namespace
-    consumerHelper.SetPrefix("/CAR");
+    consumerHelper.SetPrefix("/content");
     consumerHelper.Install(consumer2);
     Ptr<BlsApp> appPtr2 = CreateObject<BlsApp>(BlsNodeType::CLIENT);
     num = consumer2->AddApplication(appPtr2);
@@ -65,8 +65,8 @@ namespace ns3
 
     // Register /dst1 prefix with global routing controller and
     // install producer that will satisfy Interests in /dst1 namespace
-    ndnGlobalRoutingHelper.AddOrigins("/CAR", producer1);
-    producerHelper.SetPrefix("/CAR");
+    // ndnGlobalRoutingHelper.AddOrigins("/content", producer1);
+    producerHelper.SetPrefix("/content");
     producerHelper.Install(producer1);
     Ptr<BlsApp> appPtr3 = CreateObject<BlsApp>(BlsNodeType::SERVER);
     num = producer1->AddApplication(appPtr3);
@@ -74,8 +74,8 @@ namespace ns3
 
     // Register /dst2 prefix with global routing controller and
     // install producer that will satisfy Interests in /dst2 namespace
-    ndnGlobalRoutingHelper.AddOrigins("/CAR", producer2);
-    producerHelper.SetPrefix("/CAR");
+    // ndnGlobalRoutingHelper.AddOrigins("/content", producer2);
+    producerHelper.SetPrefix("/content");
     producerHelper.Install(producer2);
     Ptr<BlsApp> appPtr4 = CreateObject<BlsApp>(BlsNodeType::SERVER);
     num = producer2->AddApplication(appPtr4);
@@ -107,7 +107,7 @@ namespace ns3
     }
 
     // Calculate and install FIBs
-    ndn::GlobalRoutingHelper::CalculateRoutes();
+    //ndn::GlobalRoutingHelper::CalculateRoutes();
     Simulator::Stop(Seconds(1.0));
 
     Simulator::Run();
