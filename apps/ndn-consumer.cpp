@@ -188,8 +188,8 @@ namespace ns3
       }
 
       // pick a random line from the file and use it as a name
-      int lineNumber = (int)m_rand->GetValue(0, 1000);
-      std::string CONTENT_UNIVERSE_PATH = "/home/vlado/GitHub/Datasets/test/fifty/producers/server_dataset/large_scale/shuffled_content_universe_1000";
+      int lineNumber = (int)m_rand->GetValue(0, 2);
+      std::string CONTENT_UNIVERSE_PATH = "/home/vlado/GitHub/Datasets/test/fifty/producers/server_dataset/large_scale/shuffled_content_universe_3";
       std::ifstream inFile(CONTENT_UNIVERSE_PATH.c_str());
       std::string line;
       if (inFile.is_open())

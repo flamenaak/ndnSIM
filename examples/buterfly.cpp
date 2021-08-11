@@ -22,9 +22,9 @@ namespace ns3
 
     ndn::StackHelper ndnHelper;
     ndnHelper.SetOldContentStore("ns3::ndn::cs::Lru", "MaxSize", "10000");
-    ndnHelper.InstallAll();
     ndnHelper.disableRibManager();
-
+    ndnHelper.InstallAll();
+    
     ndn::StrategyChoiceHelper::InstallAll("/", "/localhost/nfd/strategy/multicast");
 
     // Installing global routing interface on all nodes
@@ -33,32 +33,54 @@ namespace ns3
 
     // Getting containers for the consumer/producer
     Ptr<Node> consumer1 = Names::Find<Node>("Src1");
-    NS_LOG_UNCOND("id of consumer1 " << consumer1->GetId());
     Ptr<Node> consumer2 = Names::Find<Node>("Src2");
-    NS_LOG_UNCOND("id of consumer2 " << consumer2->GetId());
     Ptr<Node> producer1 = Names::Find<Node>("Dst1");
-    NS_LOG_UNCOND("id of producer " << producer1->GetId());
-    NS_LOG_UNCOND("system id of producer " << producer1->GetSystemId());
     Ptr<Node> producer2 = Names::Find<Node>("Dst2");
-    NS_LOG_UNCOND("id of producer2 " << producer2->GetId());
-    NS_LOG_UNCOND("system id of producer2 " << producer2->GetSystemId());
+
+    Ptr<Node> router1 = Names::Find<Node>("Rtr1");
+    Ptr<Node> router2 = Names::Find<Node>("Rtr2");
+
+    Ptr<BlsApp> appPtr1 = CreateObject<BlsApp>(BlsNodeType::CLIENT, 1);
+    uint32_t num = consumer1->AddApplication(appPtr1);
+    cout << "index of BlsApp: " << num << "\n";
+    Ptr<BlsApp> appPtr2 = CreateObject<BlsApp>(BlsNodeType::CLIENT, 2);
+    num = consumer2->AddApplication(appPtr2);
+    cout << "index of BlsApp: " << num << "\n";
+    Ptr<BlsApp> appPtr3 = CreateObject<BlsApp>(BlsNodeType::SERVER, 3);
+    num = producer1->AddApplication(appPtr3);
+    cout << "index of BlsApp: " << num << "\n";
+    Ptr<BlsApp> appPtr4 = CreateObject<BlsApp>(BlsNodeType::SERVER, 4);
+    num = producer2->AddApplication(appPtr4);
+    cout << "index of BlsApp: " << num << "\n";
+    Ptr<BlsApp> appPtr5 = CreateObject<BlsApp>(BlsNodeType::ROUTER, 5);
+    num = router1->AddApplication(appPtr5);
+    cout << "index of BlsApp: " << num << "\n";
+    Ptr<BlsApp> appPtr6 = CreateObject<BlsApp>(BlsNodeType::ROUTER, 6);
+    num = router2->AddApplication(appPtr6);
+    cout << "index of BlsApp: " << num << "\n";
+    
+    Ptr<BlsApp> apps[] = { appPtr1, appPtr2, appPtr3, appPtr4, appPtr5, appPtr6 };
+    for (size_t i = 0; i < 6; i++)
+    {
+      apps[i]->getSigners()->insertPair(new SidPkPair(appPtr1->getId(), appPtr1->getSigner()->getPublicKey()));
+      apps[i]->getSigners()->insertPair(new SidPkPair(appPtr2->getId(), appPtr2->getSigner()->getPublicKey()));
+      apps[i]->getSigners()->insertPair(new SidPkPair(appPtr3->getId(), appPtr3->getSigner()->getPublicKey()));
+      apps[i]->getSigners()->insertPair(new SidPkPair(appPtr4->getId(), appPtr4->getSigner()->getPublicKey()));
+    }
+
     ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
-    consumerHelper.SetAttribute("Frequency", StringValue("100")); // 100 interests a second
+    consumerHelper.SetAttribute("Frequency", StringValue("5")); // 100 interests a second
 
     // on the first consumer node install a Consumer application
     // that will express interests in /dst1 namespace
-    consumerHelper.SetPrefix("/content");
+    consumerHelper.SetPrefix("/");
     consumerHelper.Install(consumer1);
-    Ptr<BlsApp> appPtr1 = CreateObject<BlsApp>(BlsNodeType::CLIENT);
-    uint32_t num = consumer1->AddApplication(appPtr1);
-    cout << "index of BlsApp: " << num;
+    
     // on the second consumer node install a Consumer application
     // that will express interests in /dst2 namespace
-    consumerHelper.SetPrefix("/content");
+
+    consumerHelper.SetPrefix("/");
     consumerHelper.Install(consumer2);
-    Ptr<BlsApp> appPtr2 = CreateObject<BlsApp>(BlsNodeType::CLIENT);
-    num = consumer2->AddApplication(appPtr2);
-    cout << "index of BlsApp: " << num;
 
     ndn::AppHelper producerHelper("ns3::ndn::Producer");
     producerHelper.SetAttribute("PayloadSize", StringValue("1024"));
@@ -66,20 +88,28 @@ namespace ns3
     // Register /dst1 prefix with global routing controller and
     // install producer that will satisfy Interests in /dst1 namespace
     // ndnGlobalRoutingHelper.AddOrigins("/content", producer1);
-    producerHelper.SetPrefix("/content");
-    producerHelper.Install(producer1);
-    Ptr<BlsApp> appPtr3 = CreateObject<BlsApp>(BlsNodeType::SERVER);
-    num = producer1->AddApplication(appPtr3);
-    cout << "index of BlsApp: " << num;
+    
+
+    producerHelper.SetPrefix("/");
+    producerHelper.Install(producer1).Start(Seconds(0.0));
+
+    // producerHelper.SetPrefix("/CAR");
+    // producerHelper.Install(producer1);
+    
 
     // Register /dst2 prefix with global routing controller and
     // install producer that will satisfy Interests in /dst2 namespace
     // ndnGlobalRoutingHelper.AddOrigins("/content", producer2);
-    producerHelper.SetPrefix("/content");
-    producerHelper.Install(producer2);
-    Ptr<BlsApp> appPtr4 = CreateObject<BlsApp>(BlsNodeType::SERVER);
-    num = producer2->AddApplication(appPtr4);
-    cout << "index of BlsApp: " << num;
+    
+
+    producerHelper.SetPrefix("/");
+    producerHelper.Install(producer2).Start(Seconds(0.0));
+    
+    // producerHelper.SetPrefix("/content");
+    // producerHelper.Install(producer2);
+
+    // producerHelper.SetPrefix("/CAR");
+    // producerHelper.Install(producer2);
 
     std::ifstream inFile(CONTENT_UNIVERSE_PATH.c_str());
     std::string line;
@@ -108,7 +138,7 @@ namespace ns3
 
     // Calculate and install FIBs
     //ndn::GlobalRoutingHelper::CalculateRoutes();
-    Simulator::Stop(Seconds(1.0));
+    Simulator::Stop(Seconds(10.0));
 
     Simulator::Run();
     Simulator::Destroy();
