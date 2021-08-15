@@ -111,7 +111,7 @@ App::OnInterest(shared_ptr<const Interest> interest)
 void
 App::OnData(shared_ptr<const Data> data)
 {
-  NS_LOG_FUNCTION(this << data);
+  NS_LOG_UNCOND(this << data);
   m_receivedDatas(data, this, m_face);
 }
 

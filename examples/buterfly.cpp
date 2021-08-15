@@ -69,7 +69,7 @@ namespace ns3
     }
 
     ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
-    consumerHelper.SetAttribute("Frequency", StringValue("5")); // 100 interests a second
+    //consumerHelper.SetAttribute("Frequency", StringValue("1")); // 1 interests a second
 
     // on the first consumer node install a Consumer application
     // that will express interests in /dst1 namespace
@@ -138,7 +138,7 @@ namespace ns3
 
     // Calculate and install FIBs
     //ndn::GlobalRoutingHelper::CalculateRoutes();
-    Simulator::Stop(Seconds(10.0));
+    Simulator::Stop(Seconds(20.0));
 
     Simulator::Run();
     Simulator::Destroy();
