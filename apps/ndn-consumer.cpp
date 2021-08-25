@@ -188,7 +188,8 @@ namespace ns3
       }
 
       // pick a random line from the file and use it as a name
-      int lineNumber = (int)m_rand->GetValue(0, 999);
+       int lineNumber = (int)m_rand->GetValue(0, 999);
+      
       std::string CONTENT_UNIVERSE_PATH = "/home/vlado/GitHub/Datasets/test/fifty/producers/server_dataset/large_scale/shuffled_content_universe_1000";
       std::ifstream inFile(CONTENT_UNIVERSE_PATH.c_str());
       std::string line;
@@ -200,11 +201,15 @@ namespace ns3
           i++;
         }
         inFile.close();
+        m_lineCounter++;
+        if (m_lineCounter == 999) {
+          m_lineCounter = 0;
+        }
       }
 
       shared_ptr<Name> nameWithSequence = make_shared<Name>(m_interestName);
       nameWithSequence->append(line);
-      nameWithSequence->appendSequenceNumber(m_rand->GetValue(0,99999));
+      nameWithSequence->appendSequenceNumber(lineNumber);
       // NS_LOG_UNCOND("> Interest for " << nameWithSequence->toUri());
 
       //

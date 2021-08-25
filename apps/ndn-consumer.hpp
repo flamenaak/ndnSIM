@@ -142,6 +142,8 @@ protected:
   Time m_offTime;          ///< \brief Time interval between packets
   Name m_interestName;     ///< \brief NDN Name of the Interest (use Name)
   Time m_interestLifeTime; ///< \brief LifeTime for interest packet
+  
+  uint16_t m_lineCounter;
 
   /// @cond include_hidden
   /**

@@ -11,7 +11,10 @@ namespace ns3
 
   int main(int argc, char *argv[])
   {
-    cout << "starting .. \n";
+    string frequency = "25";
+    string aggTimer = "350";
+    string folderName = "experiments_" + aggTimer + "_" + frequency;
+    cout << "starting .. size of BF is " << BF_M << " max distance is " << DELTA_MAX << "\n";
 
     CommandLine cmd;
     cmd.Parse(argc, argv);
@@ -69,7 +72,7 @@ namespace ns3
     }
 
     ndn::AppHelper consumerHelper("ns3::ndn::ConsumerCbr");
-    //consumerHelper.SetAttribute("Frequency", StringValue("1")); // 1 interests a second
+    consumerHelper.SetAttribute("Frequency", StringValue(frequency)); // 1 interests a second
 
     // on the first consumer node install a Consumer application
     // that will express interests in /dst1 namespace
@@ -136,12 +139,136 @@ namespace ns3
       exit(1);
     }
 
+    // clear log files
+    ofstream roundtripFile;
+    roundtripFile.open("/home/vlado/"+ folderName +"/roundtrips-Src1.csv", ios::out | ios::trunc);
+    roundtripFile << "";
+    roundtripFile.close();
+
+    roundtripFile.open("/home/vlado/"+ folderName +"/roundtrips-Src2.csv", ios::out | ios::trunc);
+    roundtripFile << "";
+    roundtripFile.close();
+
+    roundtripFile.open("/home/vlado/"+ folderName +"/interests-Dst1.csv", ios::out | ios::trunc);
+    roundtripFile << "";
+    roundtripFile.close();
+
+    roundtripFile.open("/home/vlado/"+ folderName +"/interests-Dst2.csv", ios::out | ios::trunc);
+    roundtripFile << "";
+    roundtripFile.close();
+
+    roundtripFile.open("/home/vlado/"+ folderName +"/interests-Src1.csv", ios::out | ios::trunc);
+    roundtripFile << "";
+    roundtripFile.close();
+
+    roundtripFile.open("/home/vlado/"+ folderName +"/interests-Src2.csv", ios::out | ios::trunc);
+    roundtripFile << "";
+    roundtripFile.close();
+
+    roundtripFile.open("/home/vlado/"+ folderName +"/interests-Rtr1.csv", ios::out | ios::trunc);
+    roundtripFile << "";
+    roundtripFile.close();
+
+    roundtripFile.open("/home/vlado/"+ folderName +"/interests-Rtr2.csv", ios::out | ios::trunc);
+    roundtripFile << "";
+    roundtripFile.close();
+
+    roundtripFile.open("/home/vlado/"+ folderName +"/unverified-Dst1.csv", ios::out | ios::trunc);
+    roundtripFile << "";
+    roundtripFile.close();
+
+    roundtripFile.open("/home/vlado/"+ folderName +"/unverified-Dst2.csv", ios::out | ios::trunc);
+    roundtripFile << "";
+    roundtripFile.close();
+
+    roundtripFile.open("/home/vlado/"+ folderName +"/unverified-Src1.csv", ios::out | ios::trunc);
+    roundtripFile << "";
+    roundtripFile.close();
+
+    roundtripFile.open("/home/vlado/"+ folderName +"/unverified-Src2.csv", ios::out | ios::trunc);
+    roundtripFile << "";
+    roundtripFile.close();
+
+    roundtripFile.open("/home/vlado/"+ folderName +"/unverified-Rtr1.csv", ios::out | ios::trunc);
+    roundtripFile << "";
+    roundtripFile.close();
+
+    roundtripFile.open("/home/vlado/"+ folderName +"/unverified-Rtr2.csv", ios::out | ios::trunc);
+    roundtripFile << "";
+    roundtripFile.close();
+
+    roundtripFile.open("/home/vlado/"+ folderName +"/roundtrips.csv", ios::out | ios::trunc);
+    roundtripFile << "";
+    roundtripFile.close();
+
+    roundtripFile.open("/home/vlado/"+ folderName +"/CAs.csv", ios::out | ios::trunc);
+    roundtripFile << "";
+    roundtripFile.close();
+
+    roundtripFile.open("/home/vlado/"+ folderName +"/CARs.csv", ios::out | ios::trunc);
+    roundtripFile << "";
+    roundtripFile.close();
+
     // Calculate and install FIBs
     //ndn::GlobalRoutingHelper::CalculateRoutes();
-    Simulator::Stop(Seconds(20.0));
+    Simulator::Stop(Seconds(10.0));
 
     Simulator::Run();
     Simulator::Destroy();
+
+        // clear log files
+    ofstream outFile;
+    ifstream readFile;
+    std::string line2;
+
+    outFile.open("/home/vlado/"+ folderName +"/roundtrips.csv", ios::out | ios::app);
+    outFile << "name, time \n";  
+    readFile.open("/home/vlado/"+ folderName +"/roundtrips-Src1.csv", ios::in);
+    while (std::getline(readFile, line2))
+    {
+      outFile << line2 << "\n";
+    }
+    readFile.close();
+
+    readFile.open("/home/vlado/"+ folderName +"/roundtrips-Src2.csv", ios::in);
+        while (std::getline(readFile, line2))
+    {
+      outFile << line2 << "\n";
+    }
+    readFile.close();
+    outFile.close();
+
+    outFile.open("/home/vlado/"+ folderName +"/CARs.csv", ios::out | ios::app);
+    outFile << "name, type, packet, overhead size, filter count, xor count, information size \n";  
+    readFile.open("/home/vlado/"+ folderName +"/interests-Dst1.csv", ios::in);
+    while (std::getline(readFile, line2))
+    {
+      outFile << line2 << "\n";
+    }
+    readFile.close();
+    readFile.open("/home/vlado/"+ folderName +"/interests-Dst2.csv", ios::in);
+    while (std::getline(readFile, line2))
+    {
+      outFile << line2 << "\n";
+    }
+    readFile.close();
+    outFile.close();
+
+    outFile.open("/home/vlado/"+ folderName +"/CAs.csv", ios::out | ios::app);
+    outFile << "name, type, packet, overhead size, filter count, xor count, information size \n";  
+    readFile.open("/home/vlado/"+ folderName +"/interests-Src1.csv", ios::in);
+    while (std::getline(readFile, line2))
+    {
+      outFile << line2 << "\n";
+    }
+    readFile.close();
+    readFile.open("/home/vlado/"+ folderName +"/interests-Src2.csv", ios::in);
+    while (std::getline(readFile, line2))
+    {
+      outFile << line2 << "\n";
+    }
+    readFile.close();
+    outFile.close();
 
     return 0;
   }
